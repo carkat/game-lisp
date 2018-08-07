@@ -8,6 +8,7 @@
   (force-output *query-io*)
   (read-line    *query-io*))
 
+;;; class definitions
 (defclass action ()
   ((name
     :initarg :name
@@ -16,8 +17,6 @@
     :initarg :fn
     :accessor do-action)))
 
-
-;;; class definitions
 (defclass entity ()
   ((name
     :initarg :name
