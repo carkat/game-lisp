@@ -120,13 +120,16 @@
 (defun continue? ()
   (y-or-n-p (if (is-alive *player*) "Continue? [y/n]" "Play again? [y/n]")))
 
+(defun print-win-lose ()
+  (format t (if (is-alive *player*) "You Win!!!~%" "You Lose!!!~%")))
+
 
 (defun game (enemy-num)
   (init-entities enemy-num)
   (loop
     do (all-take-actions)
     while (continue-game))
-    (format t (if (is-alive *player*) "You Win!!!~%" "You Lose!!!~%"))
+    (print-win-lose)
     (if (continue?)
         (game (if (is-alive *player*) 
                   (+ 1 enemy-num) 
