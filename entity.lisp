@@ -98,23 +98,40 @@
 (push (make-action "attack" #'attack)    *player-actions*)
 (push (make-action "heal" #'heal-damage) *player-actions*) 
 
-(defun initialize ()
-  (push (make-entity "bad guy 1" 50 5 *entity-actions*) *enemies*)
-  (push (make-entity "bad guy 2" 50 5 *entity-actions*) *enemies*)
-  (setf *player* (make-player (prompt-read "What is your name? ")  40 20 *player-actions*))
+(defun init-entities (enemy-num)
+  (setf *enemies* nil)
+  (dotimes (n enemy-num)
+    (push (make-entity (format nil "bad guy ~a" (+ 1 n)) 50 5 *entity-actions*) *enemies*))
+
+  (if (or (eq nil *player*) (not (is-alive *player*)))
+    (setf *player* (make-player (prompt-read "What is your name? ")  40 20 *player-actions*))))
+
+
+(defun all-take-actions ()
+  (select-action *player*)
+  (dolist (e *enemies*)
+    (select-action e)
+    (display-stats e))
+  (display-stats *player*))
+
+(defun continue-game ()
+  (and (some (lambda (e) (is-alive e)) *enemies*) (is-alive *player*)))
+
+(defun continue? ()
+  (y-or-n-p (if (is-alive *player*) "Continue? [y/n]" "Play again? [y/n]")))
+
+
+(defun game (enemy-num)
+  (init-entities enemy-num)
   (loop
-    do
-      (select-action *player*)
+    do (all-take-actions)
+    while (continue-game))
+    (format t (if (is-alive *player*) "You Win!!!~%" "You Lose!!!~%"))
+    (if (continue?)
+        (game (if (is-alive *player*) 
+                  (+ 1 enemy-num) 
+                  enemy-num))))
 
-      (dolist (e *enemies*)
-        (select-action e)
-        (display-stats e))
-
-      (display-stats *player*)
-    while (and (some (lambda (e) (is-alive e)) *enemies*) (is-alive *player*)))
-    (format t (if (is-alive *player*) "You Win!!!~%" "You Lose!!!~%")))
-
-
-(initialize)
+(game 1)
 
 
