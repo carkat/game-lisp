@@ -17,5 +17,5 @@
   :components ((:file "entity")
                (:file "game")
                (:file "input")
-               (:file "playr"))
+               (:file "player"))
   #+asdf-unicode :encoding #+asdf-unicode :utf-8)
