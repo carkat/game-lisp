@@ -5,7 +5,7 @@
 
 (defun test-main (arguments)
   (map nil 'print arguments)
-  (game 1)
+  (game-start (make-instance 'game) 1)
   0)
 
 

@@ -30,9 +30,8 @@
 
 ;;;ENTITY RELATED DEFINITIONS
 (defun make-entity (name hp atk)
-  (let ((actions nil))
-        (push (make-action "attack" #'attack) actions)
-        (make-instance 'entity :name name :hp hp :atk atk :actions actions)))
+  (make-instance 'entity :name name :hp hp :atk atk   
+                         :actions (list (make-action "attack" #'attack))))
 
 
 ;;; ENETITY METHODS
@@ -42,22 +41,20 @@
 
 (defgeneric take-damage (entity amt))
 (defmethod  take-damage ((e entity) amt)
-  (setf (hp e) (- (hp e) amt)))
+  (decf (hp e) amt))
 
 (defgeneric heal-damage (entity))
 (defmethod  heal-damage ((e entity))
-  (setf (hp e) (+ (hp e) 100)))
+  (incf (hp e) 100))
 
-(defgeneric attack (entity))
-(defmethod  attack ((e entity))
-  (take-damage *player* (atk e)))
+(defgeneric attack (entity game))
+(defmethod  attack ((e entity) (g game))
+  (take-damage (player g) (atk e)))
 
-
-(defgeneric select-action (entity))
-(defmethod  select-action ((e entity))
-  (write-line "selecting generic entity action...~%")
-  (attack e))
-
+(defgeneric select-action (entity game))
+(defmethod  select-action ((e entity) (g game))
+  (write-line "selecting generic entity action...")
+  (attack e g))
 
 (defmethod display-stats ((e entity))
     (format t "name:~a~%hp:~a~%atk:~a~%~%" 
